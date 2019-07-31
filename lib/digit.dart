@@ -43,14 +43,30 @@ class _DigitState extends State<Digit> with SingleTickerProviderStateMixin {
   );
   Animation<Offset> _slideDownAnimation2;
 
-  @override
-  void initState() {
-    super.initState();
+  void _init() {
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
     _slideDownAnimation = _controller.drive(_slideDownDetails);
     _slideDownAnimation2 = _controller.drive(_slideDownDetails2);
 
-   /* _controller.addStatusListener((status) {
+    _controller.addStatusListener(animationListener);
+    _currentValue = widget.initValue;
+    _streamSubscription = widget.itemStream.distinct().listen((value) {
+      haveData = true;
+      if (_currentValue == null) {
+        _currentValue = value;
+      } else if (value != _currentValue) {
+        _nextValue = value;
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+
+    /* _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _controller.reset();
       }
@@ -85,25 +101,7 @@ class _DigitState extends State<Digit> with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(Digit oldWidget) {
     super.didUpdateWidget(oldWidget);
-    try {
-      _controller.removeStatusListener(animationListener);
-      _streamSubscription.cancel();
-    } catch (ex) {
-
-    }
-
-    _controller.addStatusListener(animationListener);
-
-    _currentValue = widget.initValue;
-    _streamSubscription = widget.itemStream.distinct().listen((value) {
-      haveData = true;
-      if (_currentValue == null) {
-        _currentValue = value;
-      } else if (value != _currentValue) {
-        _nextValue = value;
-        _controller.forward();
-      }
-    });
+    _init();
   }
 
   @override
