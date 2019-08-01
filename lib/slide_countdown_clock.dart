@@ -115,7 +115,7 @@ class SlideCountdownClockState extends State<SlideCountdownClock> {
       timeLeft -= Duration(seconds: 1);
       if (timeLeft.inSeconds == 0) {
         Future.delayed(Duration(milliseconds: 1000), () {
-          if (widget.onDone != null) widget.onDone();
+          if (widget.onDone != null && mounted) widget.onDone();
         });
       }
       return time;
