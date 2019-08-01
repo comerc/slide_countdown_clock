@@ -44,21 +44,27 @@ class _DigitState extends State<Digit> with SingleTickerProviderStateMixin {
   Animation<Offset> _slideDownAnimation2;
 
   void _init() {
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    if (_controller == null) {
+      _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 450));
+    }
+
+    if (_streamSubscription == null) {
+      _streamSubscription = widget.itemStream.distinct().listen((value) {
+        haveData = true;
+        if (_currentValue == null) {
+          _currentValue = value;
+        } else if (value != _currentValue) {
+          _nextValue = value;
+          _controller.forward();
+        }
+      });
+    }
+
     _slideDownAnimation = _controller.drive(_slideDownDetails);
     _slideDownAnimation2 = _controller.drive(_slideDownDetails2);
 
     _controller.addStatusListener(animationListener);
     _currentValue = widget.initValue;
-    _streamSubscription = widget.itemStream.distinct().listen((value) {
-      haveData = true;
-      if (_currentValue == null) {
-        _currentValue = value;
-      } else if (value != _currentValue) {
-        _nextValue = value;
-        _controller.forward();
-      }
-    });
   }
 
   @override
