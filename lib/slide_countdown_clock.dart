@@ -72,7 +72,7 @@ class SlideCountdownClockState extends State<SlideCountdownClock> {
         this.shouldShowHours = shouldShowHours {
     timeLeft = duration;
 
-    if (timeLeft.inHours > 99) {
+    if (timeLeft.inHours > 23) {
       this.shouldShowDays = true;
     }
 
